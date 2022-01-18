@@ -1,6 +1,25 @@
+.mainContainer {
+
+}
+
 .boardSquare {
     display: inline-block;
     border: 1px solid black;
-    height: 50px;
-    width: 50px;
+    height: 100px;
+    width: 100px;
+}
+
+#settingsDiv {
+    float: left;
+    width: 20%;
+    height: 400px;
+    border: 1px solid black;
+}
+
+#gameBoard {
+    margin-left: 22%;
+}
+
+#turnText {
+    font-weight: bold;
 }
