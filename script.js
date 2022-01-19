@@ -10,9 +10,24 @@ const gameBoard = (() => {
         return gameSquares[square];
     }
 
+    function startNewGame() {
+        // create 2 players here
+        const player1 = player("player1", "X");
+        const player2 = player("player2", "O");
+
+        player1.displayStuff();
+        player2.displayStuff();
+    }
+    
+    function squareClickHandler() {
+        console.log("square clicked");
+    }
+
     return {
         setSquareMarker,
         getSquareMarker,
+        startNewGame,
+        squareClickHandler,
     };
 })();
 
@@ -35,8 +50,10 @@ const displayController = (() => {
             boardSquareDiv.textContent = gameBoard.getSquareMarker(i);
 
             boardDiv.appendChild(boardSquareDiv);
-            
         }
+
+        let boardSquares = document.querySelectorAll('.boardSquare');
+        boardSquares.forEach(key => key.addEventListener('click', gameBoard.squareClickHandler));
     }
 
     return {
@@ -47,8 +64,14 @@ const displayController = (() => {
 
 
 // factory functions
-const player = () => {
-
+const player = (name, marker) => {
+    const displayStuff = () => console.log(name + ", " + marker);
+    
+    return {
+        name,
+        marker,
+        displayStuff
+    };
 };
 
 
@@ -60,3 +83,4 @@ for (let i = 0; i < 9; i++) {
 
 displayController.renderGameBoard();
 
+gameBoard.startNewGame();
