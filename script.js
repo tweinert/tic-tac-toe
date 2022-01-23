@@ -2,6 +2,26 @@
 const gameBoard = (() => {
     const gameSquares = new Array(9);
 
+    let player1;
+    let player2;
+
+    let isPlayer1Turn = true;
+    
+    function getPlayer(playerNum) {
+        switch (playerNum) {
+            case 1:
+                return player1;
+            case 2:
+                return player2;
+            default:
+                return player1;
+        } 
+    }
+
+    function getPlayerTurn() {
+        return isPlayer1Turn;
+    }
+    
     function setSquareMarker(square, marker) {
         gameSquares[square] = marker;
     }
@@ -12,23 +32,31 @@ const gameBoard = (() => {
 
     function startNewGame() {
         // create 2 players here
-        const player1 = player("player1", "X");
-        const player2 = player("player2", "O");
-
-        player1.displayStuff();
-        player2.displayStuff();
+        player1 = player("player1", "X");
+        player2 = player("player2", "O");
     }
     
     function squareClickHandler(event) {
+        // TODO check if square already has marker
         // gets clicked board square
         let clickedSquareNum = event.target.id;
         
-        setSquareMarker(clickedSquareNum, "O");
+        if (isPlayer1Turn) {
+            setSquareMarker(clickedSquareNum, player1.marker);
+            isPlayer1Turn = false;
+            displayController.endPlayerTurn();
+        } else { 
+            setSquareMarker(clickedSquareNum, player2.marker);
+            isPlayer1Turn = true;
+            displayController.endPlayerTurn();
+        }
 
         displayController.renderGameBoard();
     }
 
     return {
+        getPlayer,
+        getPlayerTurn,
         setSquareMarker,
         getSquareMarker,
         startNewGame,
@@ -37,6 +65,12 @@ const gameBoard = (() => {
 })();
 
 const displayController = (() => {
+    function endPlayerTurn() {
+        let turnText = document.getElementById("turnText");
+        
+        turnText.textContent = gameBoard.getPlayerTurn() ? ">Player 1 Turn" : ">Player 2 Turn";
+    }
+    
     function renderGameBoard() {
         let boardDiv = document.getElementById("gameBoard");
 
@@ -64,6 +98,7 @@ const displayController = (() => {
 
     return {
         renderGameBoard,
+        endPlayerTurn,
     }
 })();
 
@@ -83,10 +118,12 @@ const player = (name, marker) => {
 
 
 // testing
+
 for (let i = 0; i < 9; i++) {
-    gameBoard.setSquareMarker(i, "X");
+    gameBoard.setSquareMarker(i, "-");
 }
 
 displayController.renderGameBoard();
+
 
 gameBoard.startNewGame();
