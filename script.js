@@ -19,8 +19,13 @@ const gameBoard = (() => {
         player2.displayStuff();
     }
     
-    function squareClickHandler() {
-        console.log("square clicked");
+    function squareClickHandler(event) {
+        // gets clicked board square
+        let clickedSquareNum = event.target.id;
+        
+        setSquareMarker(clickedSquareNum, "O");
+
+        displayController.renderGameBoard();
     }
 
     return {
@@ -46,6 +51,7 @@ const displayController = (() => {
             
             let boardSquareDiv = document.createElement('div');
             boardSquareDiv.classList.add('boardSquare');
+            boardSquareDiv.setAttribute("id", i.toString());
 
             boardSquareDiv.textContent = gameBoard.getSquareMarker(i);
 
@@ -78,7 +84,7 @@ const player = (name, marker) => {
 
 // testing
 for (let i = 0; i < 9; i++) {
-    gameBoard.setSquareMarker(i, "x");
+    gameBoard.setSquareMarker(i, "X");
 }
 
 displayController.renderGameBoard();
