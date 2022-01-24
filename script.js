@@ -37,21 +37,27 @@ const gameBoard = (() => {
     }
     
     function squareClickHandler(event) {
-        // TODO check if square already has marker
         // gets clicked board square
         let clickedSquareNum = event.target.id;
         
-        if (isPlayer1Turn) {
-            setSquareMarker(clickedSquareNum, player1.marker);
-            isPlayer1Turn = false;
-            displayController.endPlayerTurn();
-        } else { 
-            setSquareMarker(clickedSquareNum, player2.marker);
-            isPlayer1Turn = true;
-            displayController.endPlayerTurn();
+        // checks if square has marker
+        if (getSquareMarker(clickedSquareNum) != "X" && getSquareMarker(clickedSquareNum) != "O") {
+            if (isPlayer1Turn) {
+                setSquareMarker(clickedSquareNum, player1.marker);
+                isPlayer1Turn = false;
+                displayController.endPlayerTurn();
+            } else { 
+                setSquareMarker(clickedSquareNum, player2.marker);
+                isPlayer1Turn = true;
+                displayController.endPlayerTurn();
+            }
         }
 
         displayController.renderGameBoard();
+    }
+
+    function checkGameWin() {
+        
     }
 
     return {
