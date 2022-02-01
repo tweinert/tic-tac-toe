@@ -41,7 +41,7 @@ const gameBoard = (() => {
         let clickedSquareNum = event.target.id;
         
         // checks if square has marker
-        if (getSquareMarker(clickedSquareNum) != "X" && getSquareMarker(clickedSquareNum) != "O") {
+        if (gameSquares[clickedSquareNum] != "X" && gameSquares[clickedSquareNum] != "O") {
             if (isPlayer1Turn) {
                 setSquareMarker(clickedSquareNum, player1.marker);
                 isPlayer1Turn = false;
@@ -54,10 +54,43 @@ const gameBoard = (() => {
         }
 
         displayController.renderGameBoard();
+        checkGameWin();
     }
 
     function checkGameWin() {
-        
+        // horizontal
+        if (utilsModule.areEqual(gameSquares[0], gameSquares[1], gameSquares[2])) {
+            gameWinSwitch(0, "top row win");
+        } else if (utilsModule.areEqual(gameSquares[3], gameSquares[4], gameSquares[5])) {
+            gameWinSwitch(3, "middle row win");
+        } else if (utilsModule.areEqual(gameSquares[6], gameSquares[7], gameSquares[8])) {
+            gameWinSwitch(6, "bottom row win");
+        } else if (utilsModule.areEqual(gameSquares[0], gameSquares[3], gameSquares[6])) {
+            // vertical
+            gameWinSwitch(0, "left column win");
+        } else if (utilsModule.areEqual(gameSquares[1], gameSquares[4], gameSquares[7])) {
+            gameWinSwitch(1, "middle column win");
+        } else if (utilsModule.areEqual(gameSquares[2], gameSquares[5], gameSquares[8])) {
+            gameWinSwitch(2, "right column win");
+        } else if (utilsModule.areEqual(gameSquares[0], gameSquares[4], gameSquares[8])) {
+            // diagonal
+            gameWinSwitch(0, "diagonal right win");
+        } else if (utilsModule.areEqual(gameSquares[2], gameSquares[4], gameSquares[6])) {
+            gameWinSwitch(2, "diagonal left win");
+        }
+    }
+
+    function gameWinSwitch(firstSquare, winString) {
+        switch (gameSquares[firstSquare]) {
+            case player1.marker:
+                console.log("player1 " + winString);
+                break;
+            case player2.marker:
+                console.log("player2 " + winString);
+                break;
+            default:
+                break;
+        }
     }
 
     return {
@@ -105,6 +138,22 @@ const displayController = (() => {
     return {
         renderGameBoard,
         endPlayerTurn,
+    }
+})();
+
+const utilsModule = (() => {
+    function areEqual() {
+        let len = arguments.length;
+        for (let i = 1; i < len; i++) {
+            if (arguments[i] === null || arguments[i] !== arguments[i-1] || arguments[i] === "-") {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    return {
+        areEqual,
     }
 })();
 
