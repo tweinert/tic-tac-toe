@@ -2,6 +2,8 @@
 const gameBoard = (() => {
     const gameSquares = new Array(9);
 
+    let gameStarted = false;
+    
     let player1;
     let player2;
 
@@ -34,22 +36,37 @@ const gameBoard = (() => {
         // create 2 players here
         player1 = player("player1", "X");
         player2 = player("player2", "O");
+
+        // empty all squares
+        for (let i = 0; i < 9; i++) {
+            gameBoard.setSquareMarker(i, "-");
+        }
+
+        isPlayer1Turn = true;
+        
+        displayController.renderGameBoard();
+        displayController.endPlayerTurn();
+
+        gameStarted = true;
     }
     
+    // Run on click of any game square
     function squareClickHandler(event) {
         // gets clicked board square
         let clickedSquareNum = event.target.id;
         
         // checks if square has marker
-        if (gameSquares[clickedSquareNum] != "X" && gameSquares[clickedSquareNum] != "O") {
-            if (isPlayer1Turn) {
-                setSquareMarker(clickedSquareNum, player1.marker);
-                isPlayer1Turn = false;
-                displayController.endPlayerTurn();
-            } else { 
-                setSquareMarker(clickedSquareNum, player2.marker);
-                isPlayer1Turn = true;
-                displayController.endPlayerTurn();
+        if (gameStarted) {
+            if (gameSquares[clickedSquareNum] != "X" && gameSquares[clickedSquareNum] != "O") {
+                if (isPlayer1Turn) {
+                    setSquareMarker(clickedSquareNum, player1.marker);
+                    isPlayer1Turn = false;
+                    displayController.endPlayerTurn();
+                } else { 
+                    setSquareMarker(clickedSquareNum, player2.marker);
+                    isPlayer1Turn = true;
+                    displayController.endPlayerTurn();
+                }
             }
         }
 
@@ -57,6 +74,7 @@ const gameBoard = (() => {
         checkGameWin();
     }
 
+    // Checks if someone has won
     function checkGameWin() {
         // horizontal
         if (utilsModule.areEqual(gameSquares[0], gameSquares[1], gameSquares[2])) {
@@ -82,12 +100,17 @@ const gameBoard = (() => {
         }
     }
 
+    // Checks which player wins
     function gameWinSwitch(firstSquare, winString) {
         switch (gameSquares[firstSquare]) {
             case player1.marker:
+                displayController.displayWinMessage("player1 wins!");
+                gameStarted = false;
                 console.log("player1 " + winString);
                 break;
             case player2.marker:
+                displayController.displayWinMessage("player2 wins!");
+                gameStarted = false;
                 console.log("player2 " + winString);
                 break;
             default:
@@ -106,6 +129,7 @@ const gameBoard = (() => {
 })();
 
 const displayController = (() => {
+    // Modify player turn text at end of player turn
     function endPlayerTurn() {
         let turnText = document.getElementById("turnText");
         
@@ -137,13 +161,21 @@ const displayController = (() => {
         boardSquares.forEach(key => key.addEventListener('click', gameBoard.squareClickHandler));
     }
 
+    function displayWinMessage(winString) {
+        let turnText = document.getElementById("turnText");
+
+        turnText.textContent = winString;
+    }
+
     return {
         renderGameBoard,
         endPlayerTurn,
+        displayWinMessage,
     }
 })();
 
 const utilsModule = (() => {
+    // Checks if multiple values are equal to each other
     function areEqual() {
         let len = arguments.length;
         for (let i = 1; i < len; i++) {
@@ -173,14 +205,7 @@ const player = (name, marker) => {
 };
 
 
-
-// testing
-
-for (let i = 0; i < 9; i++) {
-    gameBoard.setSquareMarker(i, "-");
+// Testing
+window.onload = function() {
+    document.getElementById("startButton").addEventListener('click', gameBoard.startNewGame);
 }
-
-displayController.renderGameBoard();
-
-
-gameBoard.startNewGame();
