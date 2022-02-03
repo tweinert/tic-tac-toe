@@ -20,6 +20,17 @@ const gameBoard = (() => {
         } 
     }
 
+    function getPlayerName(playerNum) {
+        switch (playerNum) {
+            case 1:
+                return player1.getPlayerName();
+            case 2:
+                return player2.getPlayerName();
+            default:
+                return player1.getPlayerName();
+        } 
+    }
+
     function getPlayerTurn() {
         return isPlayer1Turn;
     }
@@ -33,9 +44,12 @@ const gameBoard = (() => {
     }
 
     function startNewGame() {
+        let player1TextBox = document.getElementById("p1NameTextbox");
+        let player2TextBox = document.getElementById("p2NameTextbox");
+        
         // create 2 players here
-        player1 = player("player1", "X");
-        player2 = player("player2", "O");
+        player1 = player(player1TextBox.value, "X");
+        player2 = player(player2TextBox.value, "O");
 
         // empty all squares
         for (let i = 0; i < 9; i++) {
@@ -104,12 +118,12 @@ const gameBoard = (() => {
     function gameWinSwitch(firstSquare, winString) {
         switch (gameSquares[firstSquare]) {
             case player1.marker:
-                displayController.displayWinMessage("player1 wins!");
+                displayController.displayWinMessage(getPlayerName(1) + " wins!");
                 gameStarted = false;
                 console.log("player1 " + winString);
                 break;
             case player2.marker:
-                displayController.displayWinMessage("player2 wins!");
+                displayController.displayWinMessage(getPlayerName(2) + " wins!");
                 gameStarted = false;
                 console.log("player2 " + winString);
                 break;
@@ -120,6 +134,7 @@ const gameBoard = (() => {
 
     return {
         getPlayer,
+        getPlayerName,
         getPlayerTurn,
         setSquareMarker,
         getSquareMarker,
@@ -133,7 +148,11 @@ const displayController = (() => {
     function endPlayerTurn() {
         let turnText = document.getElementById("turnText");
         
-        turnText.textContent = gameBoard.getPlayerTurn() ? ">Player 1 Turn" : ">Player 2 Turn";
+        if(gameBoard.getPlayerTurn()) {
+            turnText.textContent = ">" + gameBoard.getPlayerName(1) + " Turn";
+        } else {
+            turnText.textContent = ">" + gameBoard.getPlayerName(2) + " Turn";
+        }
     }
     
     function renderGameBoard() {
@@ -195,12 +214,13 @@ const utilsModule = (() => {
 
 // factory functions
 const player = (name, marker) => {
-    const displayStuff = () => console.log(name + ", " + marker);
+    function getPlayerName() {
+        return name;
+    }
     
     return {
-        name,
-        marker,
-        displayStuff
+        getPlayerName,
+        marker
     };
 };
 
